@@ -1,8 +1,6 @@
-# Ignore large and intermediate files
-depression_model.pth
-processed_train.csv
-test_predictions.csv
-first_1000_predictions.csv
-user_predictions.csv
+
+
+# Ignore model and data files
+*.pth
 *.pkl
-__pycache__/
+*.csv
