@@ -4,8 +4,10 @@
 
 import streamlit as st
 import pandas as pd
+import cloudpickle
 import torch
-import joblib
+
+
 import numpy as np
 from torch import nn
 import os
@@ -82,16 +84,19 @@ class DepressionModel(nn.Module):
 # ------------------------------------------------------
 # Load Preprocessor & Model
 # ------------------------------------------------------
+
 @st.cache_resource
 def load_model_preprocessor():
-    preprocessor = joblib.load("preprocessor.pkl")
+    with open("preprocessor.pkl", "rb") as f:
+        preprocessor = cloudpickle.load(f)
+    
     input_dim = len(preprocessor.feature_names)
+    
     model = DepressionModel(input_dim)
     model.load_state_dict(torch.load("depression_model.pth", map_location=torch.device("cpu")))
     model.eval()
+    
     return preprocessor, model
-
-preprocessor, model = load_model_preprocessor()
 
 # ------------------------------------------------------
 # Predict function for a single input
@@ -123,11 +128,15 @@ if os.path.exists(test_file_path):
     # Load test data and select first 1000 rows
     test_df = pd.read_csv(test_file_path).head(1000)
 
+    # Load preprocessor and model BEFORE using
+    preprocessor, model = load_model_preprocessor()
+
     # Store user info (Name, City, etc.) before dropping
     meta_info = test_df[["Name", "Gender", "Age", "City", "Working Professional or Student"]].copy()
 
     # Preprocess and predict
     processed_data = preprocessor.transform(test_df)
+
     tensor = torch.tensor(processed_data.values, dtype=torch.float32)
     with torch.no_grad():
         probs = model(tensor).squeeze().numpy()
@@ -148,6 +157,7 @@ if os.path.exists(test_file_path):
         st.download_button("⬇ Download First 1000 Predictions as CSV", f, file_name=batch_output_file, mime="text/csv")
 else:
     st.warning(" test.csv file not found. Please ensure it's placed in the app directory.")
+
     
     
     
