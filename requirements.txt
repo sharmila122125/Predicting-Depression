@@ -1,6 +1,7 @@
 streamlit
 pandas
 numpy
-torch
 scikit-learn
+torch
+joblib
 cloudpickle
