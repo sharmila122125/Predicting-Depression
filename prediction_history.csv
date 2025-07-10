@@ -1,7 +1,0 @@
-Name,Gender,Age,City,Working Professional or Student,Profession,Academic Pressure,Work Pressure,CGPA,Study Satisfaction,Job Satisfaction,Sleep Duration,Dietary Habits,Degree,Have you ever had suicidal thoughts ?,Work/Study Hours,Financial Stress,Family History of Mental Illness,Prediction_Time,Predicted_Probability,Predicted_Class
-john,Male,25,Chennai,Working Professional,Engineer,3,3,7.5,3,3,<5 hours,Healthy,B.Tech,Yes,6.0,3,Yes,2025-07-05 16:16:42,0.4822640120983124,Low Risk
-john,Male,25,Chennai,Working Professional,Engineer,3,3,7.5,3,3,<5 hours,Healthy,B.Tech,Yes,6.0,3,Yes,2025-07-05 16:18:29,0.4822640120983124,Low Risk
-john,Male,25,Chennai,Working Professional,Engineer,3,3,7.5,3,3,<5 hours,Healthy,B.Tech,Yes,6.0,3,Yes,2025-07-05 16:21:29,0.4822640120983124,Low Risk
-john,Male,25,Chennai,Working Professional,Engineer,3,3,7.5,3,3,<5 hours,Healthy,B.Tech,Yes,6.0,3,Yes,Low Risk,0.48,2025-07-05 16:23:11
-Field,Name,Gender,Age,City,Working Professional or Student,Profession,Academic Pressure,Work Pressure,CGPA,Study Satisfaction,Job Satisfaction,Sleep Duration,Dietary Habits,Degree,Suicidal Thoughts,Work/Study Hours,Financial Stress,Family History,Prediction,Probability,Timestamp
-Value,john,Male,25,Chennai,Working Professional,Engineer,3,3,7.5,3,3,<5 hours,Healthy,B.Tech,Yes,6.0,3,Yes,Low Risk,0.4823,2025-07-05 16:27:21

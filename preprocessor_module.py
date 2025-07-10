@@ -33,11 +33,9 @@ class DepressionPreprocessor(BaseEstimator, TransformerMixin):
         ])
 
         self.column_transformer.fit(X)
-
         num_features = self.num_cols
         cat_features = list(self.column_transformer.named_transformers_['cat']['encoder'].get_feature_names_out(self.cat_cols))
         self.feature_names = num_features + cat_features
-
         return self
 
     def transform(self, X):
@@ -45,4 +43,4 @@ class DepressionPreprocessor(BaseEstimator, TransformerMixin):
         return pd.DataFrame(self.column_transformer.transform(X), columns=self.feature_names)
 
     def fit_transform(self, X, y=None):
-        return self.fit(X).transform(X)
+        return self.fit(X, y).transform(X)

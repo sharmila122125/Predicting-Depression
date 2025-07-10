@@ -1,9 +1,0 @@
-Name,Gender,Age,City,Working Professional or Student,Profession,Academic Pressure,Work Pressure,CGPA,Study Satisfaction,Job Satisfaction,Sleep Duration,Dietary Habits,Degree,Have you ever had suicidal thoughts ?,Work/Study Hours,Financial Stress,Family History of Mental Illness,Predicted_Probability,Prediction,Predicted_Depression,Timestamp
-John Doe,Male,25,Chennai,Working Professional,Engineer,3,3,7.5,3,3,<5 hours,Healthy,B.Tech,Yes,6.0,3,Yes,0.4822640120983124,Low risk,,
-John Doe,Male,25,Chennai,Working Professional,Engineer,3,3,7.5,3,3,<5 hours,Healthy,B.Tech,Yes,6.0,3,Yes,0.4822640120983124,,0.0,
-John Doe,Male,25,Chennai,Working Professional,Engineer,3,3,7.5,3,3,<5 hours,Healthy,B.Tech,Yes,6.0,3,Yes,0.4822640120983124,,0.0,2025-07-05 14:36:29
-John Doe,Male,25,Chennai,Working Professional,Engineer,3,3,7.5,3,3,<5 hours,Healthy,B.Tech,Yes,6.0,3,Yes,0.4822640120983124,,Low risk,
-John Doe,Male,25,Chennai,Working Professional,Engineer,3,3,7.5,3,3,<5 hours,Healthy,B.Tech,Yes,6.0,3,Yes,0.4822640120983124,,Low,2025-07-05 14:43:04
-John Doe,Male,25,Chennai,Working Professional,Engineer,3,3,7.5,3,3,<5 hours,Healthy,B.Tech,Yes,6.0,3,Yes,0.4822640120983124,,Low,
-j,Male,25,,Working Professional,,3,3,7.5,3,3,<5 hours,Healthy,,Yes,6.0,3,Yes,0.521019458770752,,High,
-John Doe,Male,25,Chennai,Working Professional,Engineer,3,3,7.5,3,3,<5 hours,Healthy,B.Tech,Yes,6.0,3,Yes,0.4822640120983124,,Low,
