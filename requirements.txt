@@ -5,3 +5,4 @@ scikit-learn
 joblib
 cloudpickle
 torch==2.1.0
+numpy
