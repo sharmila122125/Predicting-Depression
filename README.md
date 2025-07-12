@@ -51,7 +51,7 @@ This project uses a deep learning model built with PyTorch to predict the likeli
 
 1. **Clone this repository**:
     ```bash
-    git clone https://github.com/sharmila122125/Predicting-Depression.git
+ 
     cd Predicting-Depression
     ```
 
@@ -73,7 +73,7 @@ This project uses a deep learning model built with PyTorch to predict the likeli
 - Layers: Fully connected (MLP)
 - Output: Binary classification (High / Low Depression)
 - Loss: Binary Cross Entropy
-- Optimizer: Adam
+
 
 ---
 
@@ -81,7 +81,7 @@ This project uses a deep learning model built with PyTorch to predict the likeli
 
 You can deploy the app on:
 - [Streamlit Cloud](https://share.streamlit.io/)
-- AWS Elastic Beanstalk / EC2
+
 
 ---
 
