@@ -2,36 +2,20 @@ import streamlit as st
 import pandas as pd
 import torch
 import torch.nn as nn
+import numpy as np
 import cloudpickle
-import numpy as np 
+from phase2_model import DepressionModel
+
 
 # ------------------------
-#  Set Page Config (First Streamlit Command)
+# Page Config
 # ------------------------
-st.set_page_config(page_title=" Depression Predictor", layout="wide")
+st.set_page_config(page_title="Depression Predictor", layout="wide")
 st.title(" Real-Time Depression Predictor")
 
 
 # ------------------------
-#  Define Model Architecture Matching Saved State
-# ------------------------
-class DepressionModel(nn.Module):
-    def __init__(self, input_dim):
-        super(DepressionModel, self).__init__()
-        self.network = nn.Sequential(
-            nn.Linear(input_dim, 64),  # layer 0
-            nn.ReLU(),                 # layer 1
-            nn.Dropout(0.3),           # layer 2
-            nn.Linear(64, 32),         # layer 3
-            nn.ReLU(),                 # layer 4
-            nn.Linear(32, 1)           # layer 5 — FINAL layer
-        )
-
-    def forward(self, x):
-        return self.network(x)
-
-# ------------------------
-#  Load Preprocessor and Model
+# Load Preprocessor and Model
 # ------------------------
 @st.cache_resource
 def load_model_preprocessor():
@@ -40,14 +24,12 @@ def load_model_preprocessor():
 
     input_dim = len(preprocessor.feature_names)
     model = DepressionModel(input_dim)
-
-    state_dict = torch.load("depression_model.pth", map_location=torch.device("cpu"))
-    model.load_state_dict(state_dict)
+    model.load_state_dict(torch.load("depression_model.pth", map_location=torch.device("cpu")))
     model.eval()
-
     return preprocessor, model
 
 preprocessor, model = load_model_preprocessor()
+
 
 # ------------------------
 # Prediction Function
@@ -59,51 +41,102 @@ def predict_depression(data_df):
     with torch.no_grad():
         outputs = model(X_tensor)
         probs = torch.sigmoid(outputs).squeeze()
-
-        # Ensure always a 1D array (even if 1 record)
         if probs.ndim == 0:
-            probabilities = np.array([probs.item()])
-        else:
-            probabilities = probs.numpy()
-
-        predicted_labels = (probabilities >= 0.5).astype(int)
-        depression_status = ['High' if label == 1 else 'Low' for label in predicted_labels]
-
-        return probabilities, depression_status
+            probs = torch.tensor([probs.item()])
+        predictions = (probs >= 0.5).int().numpy()
+        labels = ['High' if p == 1 else 'Low' for p in predictions]
+        return probs.numpy(), labels
 
 
 # ------------------------
-#  Load CSV Automatically (No Upload)
+# Live Input Form First
 # ------------------------
+st.header(" Enter Details for Real-Time Prediction")
+
+with st.form("depression_form"):
+    gender = st.selectbox("Gender", ["Male", "Female"])
+    age = st.slider("Age", 18, 60, 25)
+    role = st.selectbox("Working Professional or Student", ["Working Professional", "Student"])
+    profession = st.text_input("Profession", "")
+    
+    # These fields allow None (missing) via an extra "None" option
+    academic_pressure = st.selectbox("Academic Pressure (1–5)", ["None", 1, 2, 3, 4, 5])
+    work_pressure = st.selectbox("Work Pressure (1–5)", ["None", 1, 2, 3, 4, 5])
+    cgpa_option = st.selectbox("CGPA", ["None"] + [round(x * 0.1, 2) for x in range(0, 101)])
+    cgpa = None if cgpa_option == "None" else float(cgpa_option)
+
+    study_satisfaction = st.selectbox("Study Satisfaction (1–5)", ["None", 1, 2, 3, 4, 5])
+    job_satisfaction = st.selectbox("Job Satisfaction (1–5)", ["None", 1, 2, 3, 4, 5])
+    work_study_hours = st.slider("Work/Study Hours", 0, 12, 6)
+    financial_stress = st.selectbox("Financial Stress (1–5)", ["None", 1, 2, 3, 4, 5])
+    sleep_duration = st.selectbox("Sleep Duration", ["Less than 5 hours", "5-6 hours", "7-8 hours", "More than 8 hours"])
+    dietary_habits = st.selectbox("Dietary Habits", ["Healthy", "Moderate", "Unhealthy"])
+    degree = st.selectbox(
+    "Degree",
+    [
+        "None", "Class 12", "Diploma", "B.A", "B.Sc", "B.Com", "BBA", "BCA", "B.E", "B.Tech",
+        "B.Arch", "B.Ed", "LLB", "MBBS", "M.A", "M.Sc", "M.Com", "MBA", "MCA", "M.Tech", "PhD", "MD"
+    ]
+    )
+
+    suicidal_thoughts = st.selectbox("Have you ever had suicidal thoughts ?", ["Yes", "No"])
+    family_history = st.selectbox("Family History of Mental Illness", ["Yes", "No"])
+
+    submit = st.form_submit_button("Predict")
+
+if submit:
+    def parse(val):
+        return None if val == "None" else val
+
+    input_df = pd.DataFrame([{
+        'Gender': gender,
+        'Age': age,
+        'Working Professional or Student': role,
+        'Profession': profession or None,
+        'Academic Pressure': parse(academic_pressure),
+        'Work Pressure': parse(work_pressure),
+        'CGPA': cgpa,
+        'Study Satisfaction': parse(study_satisfaction),
+        'Job Satisfaction': parse(job_satisfaction),
+        'Work/Study Hours': work_study_hours,
+        'Financial Stress': parse(financial_stress),
+        'Sleep Duration': sleep_duration,
+        'Dietary Habits': dietary_habits,
+        'Degree': degree or None,
+        'Have you ever had suicidal thoughts ?': suicidal_thoughts,
+        'Family History of Mental Illness': family_history
+    }])
+
+    probs, labels = predict_depression(input_df)
+    st.success(f"Predicted Depression Risk: **{labels[0]}** ({probs[0]:.2f} probability)")
+
+
+# ------------------------
+# CSV Prediction Output Below
+# ------------------------
+st.markdown("---")
+st.header(" CSV Predictions Output")
+
 try:
     df = pd.read_csv("test_predictions.csv")
     st.success("Loaded 'test_predictions.csv' successfully.")
 
- 
+    # Predict
+    probs, labels = predict_depression(df)
+    df["Predicted_Probability"] = probs
+    df["Predicted_Depression"] = labels
 
-    # Run prediction
-    probabilities, predictions = predict_depression(df)
-# Append predictions to DataFrame
-    df["Predicted_Probability"] = probabilities
-    df["Predicted_Depression"] = predictions
+    display_df = df.drop(columns=['id', 'Name', 'City'], errors='ignore')
+    if "CGPA" in display_df.columns:
+        display_df["CGPA"] = pd.to_numeric(display_df["CGPA"], errors="coerce")
 
-#  Show full prediction table
-    st.markdown(" **Full Prediction Table**")
-    st.dataframe(df, use_container_width=True)
+    st.subheader(" Prediction Table")
+    st.dataframe(display_df, use_container_width=True)
 
-#  Download button
-    csv_download = df.to_csv(index=False).encode("utf-8")
-    st.download_button(
-    label="📥 Download Prediction CSV",
-    data=csv_download,
-    file_name="depression_predictions.csv",
-    mime="text/csv"
-)
-
-
+    csv_download = display_df.to_csv(index=False).encode("utf-8")
+    st.download_button("⬇ Download Prediction CSV", csv_download, "depression_predictions.csv", "text/csv")
 
 except FileNotFoundError:
-    st.error(" 'test_predictions.csv' file not found. Please make sure it's in the same folder as the app.")
+    st.error("File 'test_predictions.csv' not found.")
 except Exception as e:
-    st.error(f" Error during prediction: {e}")
-
+    st.error(f"Error: {e}")
